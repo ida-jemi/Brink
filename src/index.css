@@ -1,0 +1,195 @@
+@import "tailwindcss";
+
+@theme {
+  /* Map Tailwind's theme tokens to runtime CSS variables defined below,
+     so switching [data-theme] on <html> live-updates every utility class
+     that references these without touching any component. */
+  --color-void: var(--c-void);
+  --color-surface: var(--c-surface);
+  --color-surface-raised: var(--c-surface-raised);
+  --color-surface-hover: var(--c-surface-hover);
+  --color-border-line: var(--c-border-line);
+  --color-border-strong: var(--c-border-strong);
+
+  --color-text-primary: var(--c-text-primary);
+  --color-text-muted: var(--c-text-muted);
+  --color-text-faint: var(--c-text-faint);
+
+  --color-signal: var(--c-signal);
+  --color-signal-dim: var(--c-signal-dim);
+  --color-safe: var(--c-safe);
+  --color-safe-dim: var(--c-safe-dim);
+  --color-danger: var(--c-danger);
+  --color-danger-dim: var(--c-danger-dim);
+
+  /* Type */
+  --font-display: 'IBM Plex Sans', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+
+/* ---- Dark (default) — flight-deck dark, single signal-amber accent ---- */
+:root,
+[data-theme="dark"] {
+  --c-void: #0B0E14;
+  --c-surface: #141925;
+  --c-surface-raised: #1B2231;
+  --c-surface-hover: #222B3D;
+  --c-border-line: #252C3D;
+  --c-border-strong: #343E54;
+
+  --c-text-primary: #E9EBF0;
+  --c-text-muted: #8B93A7;
+  --c-text-faint: #5B6378;
+
+  --c-signal: #FF8A3D;
+  --c-signal-dim: #FF8A3D26;
+  --c-safe: #4ADE80;
+  --c-safe-dim: #4ADE8020;
+  --c-danger: #FF5470;
+  --c-danger-dim: #FF547020;
+}
+
+/* ---- Light — same structure, bright surfaces, deepened accent for contrast ---- */
+[data-theme="light"] {
+  --c-void: #F4F5F8;
+  --c-surface: #FFFFFF;
+  --c-surface-raised: #F0F1F5;
+  --c-surface-hover: #E6E8EE;
+  --c-border-line: #E1E3EA;
+  --c-border-strong: #C8CCD8;
+
+  --c-text-primary: #151820;
+  --c-text-muted: #5B6378;
+  --c-text-faint: #8B93A7;
+
+  --c-signal: #E06A1F;
+  --c-signal-dim: #E06A1F1F;
+  --c-safe: #16A34A;
+  --c-safe-dim: #16A34A1A;
+  --c-danger: #DC2C4E;
+  --c-danger-dim: #DC2C4E18;
+}
+
+/* ---- Midnight — high-contrast dark for low-light/judging-room visibility ---- */
+[data-theme="midnight"] {
+  --c-void: #000000;
+  --c-surface: #0A0A0A;
+  --c-surface-raised: #161616;
+  --c-surface-hover: #222222;
+  --c-border-line: #2E2E2E;
+  --c-border-strong: #4A4A4A;
+
+  --c-text-primary: #FFFFFF;
+  --c-text-muted: #B8BCC4;
+  --c-text-faint: #7A7E88;
+
+  --c-signal: #FFA64D;
+  --c-signal-dim: #FFA64D33;
+  --c-safe: #5CFF9D;
+  --c-safe-dim: #5CFF9D26;
+  --c-danger: #FF6B85;
+  --c-danger-dim: #FF6B8526;
+}
+
+html, body {
+  background: var(--color-void);
+  color: var(--color-text-primary);
+  font-family: var(--font-display);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+* {
+  scrollbar-color: var(--color-border-strong) transparent;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-signal);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+.font-mono-tabular {
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum";
+}
+
+.input {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 0.5rem;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.875rem;
+  color: var(--color-text-primary);
+  width: 100%;
+}
+.input::placeholder {
+  color: var(--color-text-faint);
+}
+.input:focus {
+  outline: none;
+  border-color: var(--color-signal);
+}
+
+/* Every clickable control gets a pointer cursor by default, even disabled ones
+   visually communicate their state via opacity rather than cursor (handled per-component). */
+button:not(:disabled),
+[role="button"],
+summary,
+input[type="checkbox"],
+.clickable {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.94) translateY(4px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); }
+}
+.animate-fade-in { animation: fade-in 0.2s ease both; }
+.animate-scale-in { animation: scale-in 0.18s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-slide-up { animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-slide-in-right { animation: slide-in-right 0.28s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-pop { animation: pop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+/* Native datetime-local calendar icon doesn't take color naturally; lighten it for dark backgrounds only */
+[data-theme="dark"] input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+[data-theme="midnight"] input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8);
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.pulse-dot {
+  animation: pulse-dot 1.6s ease-in-out infinite;
+}

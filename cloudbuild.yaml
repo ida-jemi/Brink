@@ -1,0 +1,41 @@
+steps:
+  # Build the Docker image, passing the Vite build-time arg Docker actually needs.
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/brink-app'
+      - '--build-arg'
+      - 'VITE_GOOGLE_CLIENT_ID=${_VITE_GOOGLE_CLIENT_ID}'
+      - '.'
+
+  # Push the built image to Artifact Registry.
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/brink-app'
+
+  # Deploy that image to Cloud Run, wiring the Gemini key from Secret Manager at runtime.
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'brink-app'
+      - '--image'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/brink-app'
+      - '--region'
+      - 'us-central1'
+      - '--allow-unauthenticated'
+      - '--set-secrets'
+      - 'GEMINI_API_KEY=gemini-api-key:latest'
+
+images:
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/brink-app'
+
+substitutions:
+  _VITE_GOOGLE_CLIENT_ID: '669039679577-obv3h4nefgvkfgkkeibhhjn7e91q5lsh.apps.googleusercontent.com'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  

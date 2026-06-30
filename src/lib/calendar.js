@@ -17,6 +17,14 @@ async function call(accessToken, path, options = {}) {
     }
     const body = await res.json().catch(() => ({}));
     const message = body?.error?.message || `Calendar request failed (${res.status})`;
+    // A 403 with this specific message means the cached token was granted under
+    // an incomplete/different scope (e.g. from an interrupted earlier sign-in) —
+    // treat it the same as an expired token rather than surfacing a raw API error.
+    if (res.status === 403 && /insufficient.*scope/i.test(message)) {
+      const err = new Error('Your Google Calendar connection needs to be refreshed — please reconnect.');
+      err.code = 'TOKEN_EXPIRED';
+      throw err;
+    }
     throw new Error(message);
   }
   if (res.status === 204) return null;
